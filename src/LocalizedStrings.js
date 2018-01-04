@@ -76,14 +76,16 @@ export default class LocalizedStrings {
                 }
             }
             //Now add any string missing from the translation but existing in the default language
+            /*
             if (defaultLanguage !== this._language) {
                 localizedStrings = this._props[defaultLanguage];
                 this._fallbackValues(localizedStrings, this);
             }
+            */
         }
     }
 
-    //Load fallback values for missing translations 
+    //Load fallback values for missing translations
     _fallbackValues(defaultStrings, strings) {
         for (var key in defaultStrings) {
             if (defaultStrings.hasOwnProperty(key) && !strings[key]) {
@@ -140,7 +142,7 @@ export default class LocalizedStrings {
             });
     }
 
-    //Return a string with the passed key in a different language 
+    //Return a string with the passed key in a different language
     getString(key, language) {
         try {
             return this._props[language][key];
