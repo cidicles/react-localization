@@ -2,6 +2,7 @@
 import React from 'react';
 
 import * as utils from './utils';
+
 /**
  * Simple module to localize the React interface using the same syntax
  * used in the ReactNativeLocalization module
