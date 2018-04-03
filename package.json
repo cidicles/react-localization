@@ -33,7 +33,7 @@
     "jasmine": "^2.7.0"
   },
   "dependencies": {
-    "localized-strings": "^0.0.9",
+    "localized-strings": "git+https://git@github.com/cidicles/localized-strings.git",
     "react": "^16.0.0"
   }
 }
