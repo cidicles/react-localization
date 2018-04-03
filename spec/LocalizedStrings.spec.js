@@ -1,35 +1,44 @@
 import React from 'react';
 
-import LocalizedStrings from '../src/LocalizedStrings';
+import LocalizedStrings from '../lib/LocalizedStrings';
 
 describe('Main Library Functions', function () {
   global.navigator = {};
-  let strings = new LocalizedStrings({
-    en: {
-      language:"english",
-      how:"How do you want your egg today?",
-      boiledEgg:"Boiled egg",
-      softBoiledEgg:"Soft-boiled egg",
-      choice:"How to choose the egg",
-      formattedValue:"I'd like some {0} and {1}, or just {0}",
-      ratings: {
-        excellent:"excellent",
-        good:"good",
-        missingComplex:"missing value"
+  let strings;
+
+  beforeEach(() => {
+    strings = new LocalizedStrings({
+      en: {
+        language:"english",
+        how:"How do you want your egg today?",
+        boiledEgg:"Boiled egg",
+        softBoiledEgg:"Soft-boiled egg",
+        choice:"How to choose the egg",
+        formattedValue:"I'd like some {0} and {1}, or just {0}",
+        ratings: {
+          excellent:"excellent",
+          good:"good",
+          missingComplex:"missing value"
+        },
+        missing:"missing value",
+        currentDate: "The current date is {month} {day}, {year}!",
+        falsy: "{0} {1} {2} {3} {4} {5}"
       },
-      missing:"missing value"
-    },
-    it: {
-      how:"Come vuoi il tuo uovo oggi?",
-      boiledEgg:"Uovo sodo",
-      softBoiledEgg:"Uovo alla coque",
-      choice:"Come scegliere l'uovo",
-      ratings: {
-        excellent:"eccellente",
-        good:"buono"
-      },
-      formattedValue:"Vorrei un po' di {0} e {1}, o solo {0}",
-    }
+      it: {
+        language: "italian",
+        how:"Come vuoi il tuo uovo oggi?",
+        boiledEgg:"Uovo sodo",
+        softBoiledEgg:"Uovo alla coque",
+        choice:"Come scegliere l'uovo",
+        ratings: {
+          excellent:"eccellente",
+          good:"buono"
+        },
+        formattedValue:"Vorrei un po' di {0} e {1}, o solo {0}",
+        currentDate: "La data corrente è {month} {day}, {year}!",
+        falsy: "{0} {1} {2} {3} {4} {5}"
+      }
+    });
   });
 
   it("Set default language to en", function(){
@@ -55,7 +64,7 @@ describe('Main Library Functions', function () {
   });
   it('Format string in default language', function () {
     expect(strings.formatString(strings.formattedValue, "cake", "ice-cream"))
-      .toEqual(["I'd like some ", "cake", " and ", "ice-cream", ", or just ", "cake"]);
+      .toEqual("I'd like some cake and ice-cream, or just cake");
   });
 
   //Switch language
@@ -64,26 +73,33 @@ describe('Main Library Functions', function () {
     expect(strings.getLanguage()).toEqual("it");
   });
   it('Extract simple value from  other language', function () {
+    strings.setLanguage("it");
     expect(strings.how).toEqual('Come vuoi il tuo uovo oggi?');
   });
-  
+
   it('Extract complex value from other language', function () {
+    strings.setLanguage("it");
     expect(strings.ratings.good).toEqual('buono');
   });
-  
+
   it('Get missing key from other language', function () {
+    strings.setLanguage("it");
     expect(strings.missing).toEqual('missing value');
   });
 
   it('Get complex missing key from other language', function () {
+    strings.setLanguage("it");
     expect(strings.ratings.missingComplex).toEqual('missing value');
   });
+
   it('Format string in other language', function () {
+    strings.setLanguage("it");
     expect(strings.formatString(strings.formattedValue, "torta", "gelato"))
-      .toEqual(["Vorrei un po' di ", "torta", " e ", "gelato", ", o solo ", "torta"]);
+      .toEqual("Vorrei un po' di torta e gelato, o solo torta");
   });
 
   it('Get string in a different language', function () {
+    strings.setLanguage("it");
     expect(strings.getString("choice", "en")).toBe("How to choose the egg");
   });
 
@@ -124,12 +140,29 @@ describe('Main Library Functions', function () {
     expect(strings.a.b.x).toEqual('a.b.x');
   });
 
+  it('Handles named tokens as part of the format string', () => {
+    const formatTokens = {
+      month: "January",
+      day: "12",
+      year: "2018"
+    };
+    expect(strings.formatString(strings.currentDate, formatTokens))
+      .toEqual("The current date is January 12, 2018!");
+  });
+
+  it('Handles falsy values', () => {
+    // falsy: "{0} {1} {2} {3} {4} {5}"
+    expect(strings.formatString(strings.falsy, 0, false, '', null, undefined, NaN))
+      .toEqual([0, " ", false, " ", '', " ", null, " ", undefined, " ", NaN].join(''));
+  });
+
   describe('formatString with React components', () => {
     const reactStrings = new LocalizedStrings({
       en: {
         onlyForMembers: "Only who have {0} can enter",
         onlyForMembersStrong: "Only who have {0} can {1}",
         helloThere: "Hello {0}! Are you sure {0} is your name?",
+        boldText: "Some {bold} text"
       },
       fi: {
         onlyForMembers: "Vain {0} voivat tulla",
@@ -151,6 +184,12 @@ describe('Main Library Functions', function () {
     it('one React component twice in a string', () => {
       expect(reactStrings.formatString(reactStrings.helloThere, <i>Henrik</i>))
         .toEqual(["Hello ", [<i key="1">Henrik</i>], "! Are you sure ", [<i key="3">Henrik</i>], " is your name?"]);
+    });
+
+    it('Handles named tokens with components', () => {
+      expect(reactStrings.formatString(reactStrings.boldText, {
+        bold: <span className="bold">BOLD</span>
+      })).toEqual(["Some ", [<span key="1" className="bold">BOLD</span>], " text"]);
     });
   });
 });
