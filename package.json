@@ -1,10 +1,6 @@
 {
   "name": "react-localization",
-<<<<<<< HEAD
-  "version": "0.1.6",
-=======
   "version": "1.0.7",
->>>>>>> upstream/master
   "description": "Simple module to localize the React interface using the same syntax used in the ReactNativeLocalization module, use 'npm run build' before publishing",
   "scripts": {
     "babel-version": "babel --version",
@@ -37,11 +33,7 @@
     "jasmine": "^2.7.0"
   },
   "dependencies": {
-<<<<<<< HEAD
-    "es6-symbol": "^3.1.1",
-=======
     "localized-strings": "^0.0.9",
->>>>>>> upstream/master
     "react": "^16.0.0"
   }
 }
