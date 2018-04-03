@@ -50,7 +50,7 @@ LocalizedStrings.prototype.formatString = (str, ...valuesForPlaceholders) => {
                         valueForPlaceholder = valueFromObjectPlaceholder;
                       } else {
                         // If value still isn't found, then it must have been undefined/null
-                        return valueForPlaceholder;
+                        return false;
                       }
                     }
 
